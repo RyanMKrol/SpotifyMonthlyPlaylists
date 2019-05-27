@@ -7,7 +7,7 @@ import express from 'express'
 import path from 'path'
 
 import * as storageLib from './DataStorage'
-import * as songTrackingLib from './SongTracking'
+import songTrackingLib from './SongTracking'
 import { spotifyAuthLib, lastFmAuthLib } from './Authentication'
 import { logger } from './Utils'
 
@@ -57,9 +57,12 @@ app.get('/setupSubscription', async function(req, res) {
     const refreshToken = req.cookies[refreshTokenCookieKey]
     const lastFmUsername = req.cookies[lastFmTokenCookieKey]
 
+    const spotifyTokens = await spotifyAuthLib.refreshTokens(refreshToken)
+    const accessToken = spotifyTokens.accessToken
+
     await storageLib.store(refreshToken, lastFmUsername)
 
-    const rawSongData = await songTrackingLib.fetchRecentSongs(lastFmUsername)
+    const rawSongData = await songTrackingLib.fetchRecentTopSongs(lastFmUsername)
 
     const songData = rawSongData.map((songItem) => {
       return {
@@ -68,7 +71,13 @@ app.get('/setupSubscription', async function(req, res) {
       }
     })
 
-    // search for tracks using spotify's api
+    const spotifySongIdTasks = songData.map(async (item) => {
+      return songTrackingLib.fetchSpotifySongId(item, accessToken)
+    })
+
+    const spotifySongIds = (await Promise.all(spotifySongIdTasks))
+      .filter((x) => x !== undefined)
+
 
     // store the tracks in a playlist
 

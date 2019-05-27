@@ -1,5 +1,3 @@
-import fetchRecentSongs from './SongTracking'
+import * as songTrackingLib from './SongTracking'
 
-export {
-  fetchRecentSongs
-}
+export default songTrackingLib
