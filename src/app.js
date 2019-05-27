@@ -6,17 +6,14 @@ import cors from 'cors'
 import express from 'express'
 import path from 'path'
 
-import {
-  spotifyAuthLib,
-  lastFmAuthLib,
-} from './Authentication'
+import * as storageLib from './DataStorage'
+import { spotifyAuthLib, lastFmAuthLib } from './Authentication'
+import { logger } from './Utils'
 
 import {
-  accessTokenCookieKey,
   refreshTokenCookieKey,
-  defaultTracksPerArtist,
+  lastFmTokenCookieKey,
 } from './constants'
-import { logger } from './Utils'
 
 const app = express()
 
@@ -28,6 +25,7 @@ app.use(express.static(__dirname + './../public'))
 // initial permissions fetching
 app.get('/login', async function(req, res) {
   const lastFmId = req.query.lastFmUserId
+  res.cookie(lastFmTokenCookieKey, lastFmId)
 
   try {
     await lastFmAuthLib.findUser(lastFmId)
@@ -55,7 +53,10 @@ app.get('/callback', async function(req, res) {
 app.get('/setupSubscription', async function(req, res) {
   try {
 
-    // store user data
+    const refreshToken = req.cookies[refreshTokenCookieKey]
+    const lastFmUsername = req.cookies[lastFmTokenCookieKey]
+
+    await storageLib.store(refreshToken, lastFmUsername)
 
     // fetch recent tracks
 
@@ -66,6 +67,7 @@ app.get('/setupSubscription', async function(req, res) {
     const fileLoc = path.resolve(`${__dirname}./../public/done/index.html`)
     res.sendFile(fileLoc)
   } catch(err) {
+    console.log(err)
     logger.fatal(`Issue fetching access tokens with error: ${err}`)
   }
 })

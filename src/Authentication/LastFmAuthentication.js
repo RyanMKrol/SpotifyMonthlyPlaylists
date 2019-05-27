@@ -1,7 +1,7 @@
 import * as requestLib from './../RequestLib'
 import retryStrategy from './LastFmRetryStrategy'
 
-const apiKey = require(`${__dirname}/../../config.json`).lastFmSecret
+const apiKey = require(`${__dirname}/../../credentials/lastFmCredentials.json`).secret
 const baseUrl = 'http://ws.audioscrobbler.com/2.0/?method=user.getinfo'
 const RETRY_DELAY = 1000
 

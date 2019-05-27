@@ -1,7 +1,7 @@
-const accessTokenCookieKey = 'reccommendify_access_token'
-const refreshTokenCookieKey = 'reccommendify_refresh_token'
+const refreshTokenCookieKey = 'monthly_playlists_refresh_token'
+const lastFmTokenCookieKey = 'monthly_playlists_last_fm'
 
 export {
-  accessTokenCookieKey,
   refreshTokenCookieKey,
+  lastFmTokenCookieKey,
 }
