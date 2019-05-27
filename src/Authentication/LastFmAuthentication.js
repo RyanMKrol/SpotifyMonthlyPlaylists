@@ -1,5 +1,5 @@
 import * as requestLib from './../RequestLib'
-import retryStrategy from './RetryStrategy'
+import retryStrategy from './LastFmRetryStrategy'
 
 const apiKey = require(`${__dirname}/../../config.json`).lastFmSecret
 const baseUrl = 'http://ws.audioscrobbler.com/2.0/?method=user.getinfo'
