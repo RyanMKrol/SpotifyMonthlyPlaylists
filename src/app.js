@@ -26,9 +26,15 @@ app.use(express.static(__dirname + './../public'))
   .use(bodyParser.urlencoded({extended: false}))
 
 // initial permissions fetching
-app.get('/login', function(req, res) {
-  logger.info('Logging in')
-  spotifyAuthLib.requestInitialAuth(res)
+app.get('/login', async function(req, res) {
+  const lastFmId = req.query.lastFmUserId
+
+  try {
+    await lastFmAuthLib.findUser(lastFmId)
+    spotifyAuthLib.requestInitialAuth(res)
+  } catch (error) {
+    res.send('Could not verify user data')
+  }
 })
 
 app.get('/callback', async function(req, res) {
@@ -48,6 +54,15 @@ app.get('/callback', async function(req, res) {
 
 app.get('/setupSubscription', async function(req, res) {
   try {
+
+    // store user data
+
+    // fetch recent tracks
+
+    // search for tracks using spotify's api
+
+    // store the tracks in a playlist
+
     const fileLoc = path.resolve(`${__dirname}./../public/done/index.html`)
     res.sendFile(fileLoc)
   } catch(err) {

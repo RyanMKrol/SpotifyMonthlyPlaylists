@@ -22,7 +22,6 @@ function post(options) {
 function _makeRequest(options) {
   return request({
     ...options,
-    maxAttempts: 5,
   })
 }
 

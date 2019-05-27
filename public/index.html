@@ -8,7 +8,18 @@
   <body>
     <div class="container">
       <h1>Monthly Playlists</h1>
-      <a href="/login">Let's Go!</a>
+      <h2>What is your LastFM user ID? (we'll need this for your listening history)</h2>
+      <form action='/login'>
+        <input
+          type="text"
+          name="lastFmUserId"
+          placeholder="LastFM UserID"
+        />
+        <br/>
+        <input
+          type="submit"
+        />
+      </form>
     </div>
   </body>
 </html>
