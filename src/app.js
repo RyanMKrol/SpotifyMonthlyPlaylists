@@ -7,6 +7,7 @@ import express from 'express'
 import path from 'path'
 
 import * as storageLib from './DataStorage'
+import * as songTrackingLib from './SongTracking'
 import { spotifyAuthLib, lastFmAuthLib } from './Authentication'
 import { logger } from './Utils'
 
@@ -58,7 +59,14 @@ app.get('/setupSubscription', async function(req, res) {
 
     await storageLib.store(refreshToken, lastFmUsername)
 
-    // fetch recent tracks
+    const rawSongData = await songTrackingLib.fetchRecentSongs(lastFmUsername)
+
+    const songData = rawSongData.map((songItem) => {
+      return {
+        songName: songItem.name,
+        artistName: songItem.artist.name,
+      }
+    })
 
     // search for tracks using spotify's api
 
