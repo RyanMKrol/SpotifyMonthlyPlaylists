@@ -3,10 +3,9 @@ import uuid from 'uuid/v1'
 
 import * as requestLib from './../RequestLib'
 
-const CLIENT_ID = 'a9333632c14a45b0ad372b5ab7a8afef'
-const CLIENT_SECRET = require(`${__dirname}/../../config.json`).clientSecret
-const REDIRECT_URL = encodeURI('http://ec2-18-223-119-35.us-east-2.compute.amazonaws.com:8000/callback')
-const AUTH_STATE_KEY = 'spotify_auth_state'
+const CLIENT_ID = 'f73b560c5a4848609c056470b4c2872c'
+const CLIENT_SECRET = require(`${__dirname}/../../config.json`).spotifySecret
+const REDIRECT_URL = encodeURI('http://localhost:8002/callback')
 const PERMISSIONS_LIST = 'user-read-private playlist-modify-public playlist-modify-private'
 
 // user permits us to act on their behalf

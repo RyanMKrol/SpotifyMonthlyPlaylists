@@ -6,13 +6,17 @@ import cors from 'cors'
 import express from 'express'
 import path from 'path'
 
-import * as authLib from './Authentication'
+import {
+  spotifyAuthLib,
+  lastFmAuthLib,
+} from './Authentication'
 
 import {
   accessTokenCookieKey,
   refreshTokenCookieKey,
   defaultTracksPerArtist,
 } from './constants'
+import { logger } from './Utils'
 
 const app = express()
 
@@ -24,7 +28,7 @@ app.use(express.static(__dirname + './../public'))
 // initial permissions fetching
 app.get('/login', function(req, res) {
   logger.info('Logging in')
-  authLib.requestInitialAuth(res)
+  spotifyAuthLib.requestInitialAuth(res)
 })
 
 app.get('/callback', async function(req, res) {
@@ -32,7 +36,7 @@ app.get('/callback', async function(req, res) {
     logger.info('Fetching the access tokens')
 
     // getting specific tokens for API requests
-    const tokens = await authLib.requestApiTokens(req, res)
+    const tokens = await spotifyAuthLib.requestApiTokens(req, res)
 
     res.cookie(refreshTokenCookieKey, tokens.refreshToken)
 
@@ -44,7 +48,6 @@ app.get('/callback', async function(req, res) {
 
 app.get('/setupSubscription', async function(req, res) {
   try {
-
     const fileLoc = path.resolve(`${__dirname}./../public/done/index.html`)
     res.sendFile(fileLoc)
   } catch(err) {
