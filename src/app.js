@@ -6,8 +6,10 @@ import cors from 'cors'
 import express from 'express'
 import path from 'path'
 
+import * as playlistLib from './PlaylistData'
 import * as storageLib from './DataStorage'
 import songTrackingLib from './SongTracking'
+import fetchUserId from './UserData'
 import { spotifyAuthLib, lastFmAuthLib } from './Authentication'
 import { logger } from './Utils'
 
@@ -78,8 +80,11 @@ app.get('/setupSubscription', async function(req, res) {
     const spotifySongIds = (await Promise.all(spotifySongIdTasks))
       .filter((x) => x !== undefined)
 
+    const userId = await fetchUserId(accessToken)
 
-    // store the tracks in a playlist
+    const playlistId = await playlistLib.createPlaylist(accessToken, userId)
+
+    const _ = await playlistLib.addTracksToPlaylist(accessToken, playlistId, spotifySongIds)
 
     const fileLoc = path.resolve(`${__dirname}./../public/done/index.html`)
     res.sendFile(fileLoc)

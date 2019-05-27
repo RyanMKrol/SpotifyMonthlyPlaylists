@@ -9,9 +9,11 @@
     "start": "npm run-script build && node lib/app.js"
   },
   "dependencies": {
+    "array.chunk": "^1.1.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
+    "date-and-time": "^0.6.3",
     "express": "^4.17.1",
     "fstream": "^1.0.12",
     "install": "^0.12.2",
