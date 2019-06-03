@@ -9,7 +9,6 @@ const BASE_LAST_FM_API_URL = `http://ws.audioscrobbler.com/2.0/?method=user.gett
 const BASE_SPOTIFY_API_URL = `https://api.spotify.com/v1/search?limit=1&type=track`
 
 async function fetchRecentTopSongs(username) {
-  console.log(`${BASE_LAST_FM_API_URL}&user=${username}`)
   const apiOptions = {
     url: `${BASE_LAST_FM_API_URL}&user=${username}`,
     json: true,

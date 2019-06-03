@@ -7,7 +7,7 @@ import express from 'express'
 import path from 'path'
 
 import * as playlistLib from './PlaylistData'
-import * as storageLib from './DataStorage'
+import * as storageLib from './DataTransactions'
 import songTrackingLib from './SongTracking'
 import fetchUserId from './UserData'
 import { spotifyAuthLib, lastFmAuthLib } from './Authentication'
@@ -55,42 +55,28 @@ app.get('/callback', async function(req, res) {
 
 app.get('/setupSubscription', async function(req, res) {
   try {
-
+    // sort out spotify tokens
     const refreshToken = req.cookies[refreshTokenCookieKey]
     const lastFmUsername = req.cookies[lastFmTokenCookieKey]
+
+    logger.info(`Fetching the tokens from the cookies: ${req.cookies}`)
 
     const spotifyTokens = await spotifyAuthLib.refreshTokens(refreshToken)
     const accessToken = spotifyTokens.accessToken
 
-    await storageLib.store(refreshToken, lastFmUsername)
+    logger.info(`Fetched tokens from Spotify: ${spotifyTokens}`)
+    logger.info(`Fetched an access token from Spotify: ${accessToken}`)
 
-    const rawSongData = await songTrackingLib.fetchRecentTopSongs(lastFmUsername)
+    // store the new user
+    await storageLib.store(lastFmUsername, refreshToken)
 
-    const songData = rawSongData.map((songItem) => {
-      return {
-        songName: songItem.name,
-        artistName: songItem.artist.name,
-      }
-    })
-
-    const spotifySongIdTasks = songData.map(async (item) => {
-      return songTrackingLib.fetchSpotifySongId(item, accessToken)
-    })
-
-    const spotifySongIds = (await Promise.all(spotifySongIdTasks))
-      .filter((x) => x !== undefined)
-
-    const userId = await fetchUserId(accessToken)
-
-    const playlistId = await playlistLib.createPlaylist(accessToken, userId)
-
-    const _ = await playlistLib.addTracksToPlaylist(accessToken, playlistId, spotifySongIds)
+    logger.info(`Stored the tokens`)
 
     const fileLoc = path.resolve(`${__dirname}./../public/done/index.html`)
     res.sendFile(fileLoc)
   } catch(err) {
-    console.log(err)
-    logger.fatal(`Issue fetching access tokens with error: ${err}`)
+    res.send('There was an error')
+    logger.fatal(`Issue creating a subscription: ${err}`)
   }
 })
 

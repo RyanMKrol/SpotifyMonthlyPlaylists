@@ -1,0 +1,8 @@
+{
+  "dev": {
+    "callbackUri": "http://localhost:8002/callback"
+  },
+  "prod": {
+    "callbackUri": "http://ec2-18-223-119-35.us-east-2.compute.amazonaws.com:8002/callback"
+  }
+}

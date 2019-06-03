@@ -2,10 +2,11 @@ import querystring from 'querystring'
 import uuid from 'uuid/v1'
 
 import * as requestLib from './../RequestLib'
+import * as utils from './../Utils'
 
 const CLIENT_ID = 'f73b560c5a4848609c056470b4c2872c'
 const CLIENT_SECRET = require(`${__dirname}/../../credentials/spotifyCredentials.json`).secret
-const REDIRECT_URL = encodeURI('http://localhost:8002/callback')
+const REDIRECT_URL = encodeURI(utils.getConfigEntry('callbackUri'))
 const PERMISSIONS_LIST = 'user-read-private playlist-modify-public playlist-modify-private'
 
 // user permits us to act on their behalf
